@@ -15,6 +15,8 @@ Instar is in **v0.x** — the API surface is unstable until v1.0.0. Breaking cha
 - SPDX license headers on all Python source files.
 - CI baseline at `.github/workflows/ci.yml`: four parallel jobs — `ruff check` + `ruff format --check`, `mypy --strict`, `pytest -m 'not live'` on Python 3.11/3.12/3.13, and an SPDX-header check. Runs on push to `main` and on pull requests.
 - `Planning/Engagement-Methodology.md` — first-draft spine for how Instar fits into a complete LLM evaluation engagement. Names eleven phases (A–K), annotates each with its IP-boundary side (OSS / mixed / private methodology), and frames the process as a loop rather than a line. Companion artifact (`Engineering/docs/How-Instar-Fits-an-Evaluation.md`) planned after the Week-2 code lift; Atelier playbook is a separate, private artifact.
+- `Engineering/Introduction.md` — first-pass contributor-facing introduction, written for people Brian is inviting to the project.
+- `Marketing/Measuring-Your-AI-Costs.md` — first-pass positioning + evaluation-process primer for leaders. Draft; not for publication until v0.1 gate clears (see `Planning/Naming.md`).
 
 ### Changed
 
