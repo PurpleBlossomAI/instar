@@ -13,6 +13,7 @@ Instar is in **v0.x** — the API surface is unstable until v1.0.0. Breaking cha
 - `pyproject.toml` with setuptools build backend, PEP 639 SPDX license fields, and configuration for `ruff` (lint + format), `mypy --strict`, and `pytest`. Package located at `Engineering/src/instar/` per `CLAUDE.md` §Organization principle.
 - Smoke test at `Engineering/tests/test_smoke.py` — verifies the package installs and imports.
 - SPDX license headers on all Python source files.
+- CI baseline at `.github/workflows/ci.yml`: four parallel jobs — `ruff check` + `ruff format --check`, `mypy --strict`, `pytest -m 'not live'` on Python 3.11/3.12/3.13, and an SPDX-header check. Runs on push to `main` and on pull requests.
 
 ### Changed
 
