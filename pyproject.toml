@@ -1,0 +1,124 @@
+# Instar packaging config.
+#
+# Src tree lives at Engineering/src/instar/ per CLAUDE.md §Organization
+# principle — see [tool.setuptools.package-dir] and .packages.find below.
+
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "instar"
+version = "0.1.0.dev0"
+description = "An open-source harness for measuring LLM workloads — cost, quality, and latency — on your own traffic."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+requires-python = ">=3.11"
+authors = [
+  {name = "Purple Blossom AI"},
+  {name = "Brian Fromme", email = "brianfromme@gmail.com"},
+]
+keywords = [
+  "llm",
+  "evaluation",
+  "measurement",
+  "harness",
+  "routing",
+  "cost",
+  "quality",
+  "latency",
+]
+classifiers = [
+  "Development Status :: 2 - Pre-Alpha",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Information Technology",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+# Runtime deps are intentionally empty at v0.1 pre-release. They will grow
+# as modules land in Week 2 of the sprint (see Planning/Project-Plan.md §10).
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8",
+  "ruff>=0.6",
+  "mypy>=1.11",
+  "pre-commit>=3.8",
+  "detect-secrets>=1.5",
+]
+
+[project.urls]
+Homepage = "https://github.com/PurpleBlossomAI/instar"
+Repository = "https://github.com/PurpleBlossomAI/instar"
+Issues = "https://github.com/PurpleBlossomAI/instar/issues"
+Changelog = "https://github.com/PurpleBlossomAI/instar/blob/main/CHANGELOG.md"
+
+# CLI entry point deliberately omitted until Engineering/src/instar/cli/
+# lands in Week 2 of the sprint. When it does, add:
+#   [project.scripts]
+#   instar = "instar.cli:main"
+
+# ── Package location ────────────────────────────────────────────────────
+# The src tree is under Engineering/src/, not the more common ./src/.
+# These two settings tell setuptools where to look.
+
+[tool.setuptools.package-dir]
+"" = "Engineering/src"
+
+[tool.setuptools.packages.find]
+where = ["Engineering/src"]
+
+# ── Ruff (lint + format) ────────────────────────────────────────────────
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["Engineering/src", "Engineering/tests"]
+
+[tool.ruff.lint]
+select = [
+  "E",    # pycodestyle errors
+  "W",    # pycodestyle warnings
+  "F",    # pyflakes
+  "I",    # isort
+  "B",    # flake8-bugbear
+  "UP",   # pyupgrade
+  "C4",   # flake8-comprehensions
+  "SIM",  # flake8-simplify
+  "RUF",  # ruff-specific
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+# ── mypy (strict on src, loose on tests) ────────────────────────────────
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["Engineering/src/instar"]
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+strict = false
+
+# ── pytest ──────────────────────────────────────────────────────────────
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["Engineering/tests"]
+addopts = [
+  "-ra",
+  "--strict-markers",
+  "--strict-config",
+]
+markers = [
+  "live: tests that hit real LLM providers (require API credentials; skipped by default in CI)",
+]

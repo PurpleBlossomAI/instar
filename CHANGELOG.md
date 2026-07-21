@@ -10,6 +10,9 @@ Instar is in **v0.x** — the API surface is unstable until v1.0.0. Breaking cha
 
 - Repository scaffolding: `Planning/`, `Engineering/`, `Marketing/`, `CLAUDE.md`, initial README stub.
 - Governance files: `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md` (Contributor Covenant v2.1), `SECURITY.md`, `CHANGELOG.md`.
+- `pyproject.toml` with setuptools build backend, PEP 639 SPDX license fields, and configuration for `ruff` (lint + format), `mypy --strict`, and `pytest`. Package located at `Engineering/src/instar/` per `CLAUDE.md` §Organization principle.
+- Smoke test at `Engineering/tests/test_smoke.py` — verifies the package installs and imports.
+- SPDX license headers on all Python source files.
 
 ### Changed
 
