@@ -1,0 +1,15 @@
+{
+  "default": "foreground",
+  "categories": {
+    "support.ticket_classification": "background",
+    "campaign.copy_generation": "foreground",
+    "content.seo_metadata": "background",
+    "brand.voice_check": "background",
+    "content.insight_summary": "foreground",
+    "sales.lead_enrichment": "background",
+    "sales.call_summary": "background",
+    "sales.proposal_draft": "foreground",
+    "ops.status_rollup": "background",
+    "assistant.ask": "foreground"
+  }
+}

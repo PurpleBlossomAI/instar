@@ -2,15 +2,32 @@
 
 Code, tests, examples, fixtures, docs source, and engineering notes for Instar. This is where the harness gets built and where design decisions about *how* to build it get recorded.
 
-## Contents (target)
+## Contents
 
-Most of this is placeholder as of 2026-07-21 — see `../Planning/Project-Plan.md` §10 for the two-week sprint that fills it in.
+- **`src/instar/`** — the Python package.
+  - `core/` — the traffic format, the feature catalog, cost math, and the two runners (`route`, `gateway`).
+  - `providers/` — the `Backend` seam: mock, Anthropic, and any OpenAI-compatible endpoint.
+  - `policies/` — routing policies (control, rules, classifier).
+  - `rubrics/` — judges: objective label match, LLM-as-judge, auto-dispatch, mock.
+  - `reporters/` — JSON, Markdown, and CSV output.
+  - `cli/` — `instar route` and `instar gateway`.
+- **`fixtures/`** — synthetic, PII-free workload fixtures plus example feature catalogs. Customer-derived fixtures stay in the private repo (see IP boundary). `tests/test_fixtures.py` asserts that no private product terms appear here.
+- **`tests/`** — `pytest`, all hermetic. Mock mode is always green; live-provider tests sit behind the `live` marker and are skipped in CI.
+- **`Docs/`** — contributor documentation: `CODE-OVERVIEW.md` for orientation, `RUNBOOK.md` for running things.
+- **`docs/`** — MkDocs Material source for the published site. Not yet scaffolded; see `../Planning/Project-Plan.md`.
 
-- **`src/instar/`** — the Python package. Layout: `core/`, `providers/`, `policies/`, `rubrics/`, `reporters/`, `cli/`. See Project-Plan §4 for the module split.
-- **`fixtures/`** — synthetic, PII-free workload fixtures used by examples and tests. Customer-derived fixtures stay in the private repo (see IP boundary).
-- **`examples/`** — runnable end-to-end walkthroughs. `instar run examples/hello.yaml` in `--mock` mode is the v0.1 "proof of life."
-- **`tests/`** — `pytest`. Mock-mode always green; live-provider tests behind a marker and skipped without secrets.
-- **`docs/`** — MkDocs Material source. Published to GitHub Pages. Scaffolded in Week 2 of the sprint.
+The core is **stdlib-only** on purpose: mock mode runs anywhere, `pip install instar` pulls in nothing, and CI never breaks on a provider SDK release. Provider SDKs are optional extras, imported lazily by the module that needs them.
+
+## Running it
+
+```bash
+pip install -e ".[dev]"
+instar route --traffic Engineering/fixtures/sample-traffic.jsonl \
+    --catalog Engineering/fixtures/catalogs/example-departments.json
+pytest -m "not live"
+```
+
+See `Docs/RUNBOOK.md` for the full set of tasks, including measuring your own workload.
 
 ## Src layout note
 
