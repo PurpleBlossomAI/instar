@@ -1,12 +1,14 @@
 # Instar documentation — start here
 
-This folder is the technical documentation for Instar. If you're not sure where
-to begin, pick the row that sounds like you.
+This folder is the documentation for Instar — for the people who run it and the
+people who decide with it. If you're not sure where to begin, pick the row that
+sounds like you.
 
 | If you want to… | Read, in order |
 |---|---|
+| **Decide whether a model is good enough** (you own the outcome, not the tool) | [`GUIDE-Setting-the-Bar.md`](GUIDE-Setting-the-Bar.md) |
 | **Run it and measure a workload** | [`RUNBOOK.md`](RUNBOOK.md) → [`PROVIDERS.md`](PROVIDERS.md) |
-| **Understand rubrics and set the bar** | [`GUIDE-Creating-Rubrics.md`](GUIDE-Creating-Rubrics.md) → [`RUBRICS.md`](RUBRICS.md) |
+| **Turn a decision into a pass/fail check** | [`GUIDE-Creating-Rubrics.md`](GUIDE-Creating-Rubrics.md) → [`RUBRICS.md`](RUBRICS.md) |
 | **Work on the code** | [`CODE-OVERVIEW.md`](CODE-OVERVIEW.md) → [`RUNBOOK.md`](RUNBOOK.md) |
 
 ---
@@ -15,6 +17,7 @@ to begin, pick the row that sounds like you.
 
 | Doc | It's a… | For | In one line |
 |---|---|---|---|
+| [`GUIDE-Setting-the-Bar.md`](GUIDE-Setting-the-Bar.md) | one-pager | decision owner | The bar is a business judgment, not a technical one. How to set it, in plain terms — no tool, no jargon. |
 | [`RUNBOOK.md`](RUNBOOK.md) | task guide | operator | Every command, with a walkthrough for measuring your own workload. |
 | [`PROVIDERS.md`](PROVIDERS.md) | task guide | operator | Connecting a hosted LLM (account → key → URL) or a self-hosted SLM (server, sizing, licensing). |
 | [`GUIDE-Creating-Rubrics.md`](GUIDE-Creating-Rubrics.md) | tutorial | operator + decision owner | How to *arrive at* a rubric that decides your question — the method, not just the syntax. |

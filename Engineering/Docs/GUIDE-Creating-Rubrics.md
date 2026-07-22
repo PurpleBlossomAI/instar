@@ -183,6 +183,13 @@ a broken run.
 answer is a round number that feels safe. Here are the legitimate sources, best
 first.
 
+> **Often the number isn't yours to invent.** The threshold is a business
+> judgment owned by whoever owns the outcome — and that is frequently a different
+> person from the one writing the rubric. If that's you, or if you need to brief
+> them, [`GUIDE-Setting-the-Bar.md`](GUIDE-Setting-the-Bar.md) is the one-page,
+> jargon-free version to hand them. Your job here is to turn the numbers they
+> give you into the dimensions below.
+
 ### 1. The downstream cost of being wrong
 
 The strongest source. Trace the error to money:
