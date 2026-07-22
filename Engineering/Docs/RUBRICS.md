@@ -8,10 +8,11 @@
 > saving cannot hide a failing quality score. A dimension with nothing to measure
 > returns `unmeasured`, which is never a pass. A failing verdict exits `1`.
 >
-> **New to rubrics? Start with the tutorial:**
-> [`GUIDE-Creating-Rubrics.md`](GUIDE-Creating-Rubrics.md) teaches the method —
-> how to derive dimensions and thresholds from your decision. This page is the
-> reference you keep open while you write one.
+> **New to rubrics?** Learn by doing in
+> [`LESSON-Rubrics-Hands-On.md`](LESSON-Rubrics-Hands-On.md) (ten minutes, no
+> spend), or learn the method in
+> [`GUIDE-Creating-Rubrics.md`](GUIDE-Creating-Rubrics.md). This page is the
+> reference you keep open while writing one.
 
 ---
 
