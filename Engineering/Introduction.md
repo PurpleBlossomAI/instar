@@ -1,9 +1,9 @@
 # Introducing Instar — and how to get involved
 
-> **TL;DR:** Instar is a new Apache-2.0 harness for measuring LLM workloads on your own traffic — cost, quality, and latency across candidate models, providers, and routers. Repo is a week old, scaffolding is done, real code lands in Week 2. Looking for a few genuine collaborators — one PR, one design conversation, or "I'll be an early user and file real bug reports" all welcome. Reach out to Brian if you're curious.
+> **TL;DR:** Instar is a new Apache-2.0 harness for measuring LLM workloads on your own traffic — cost, quality, and latency across candidate models, providers, and routers. Repo is two days old but already running: harness core, CLI, provider adapters, rubric framework, and a substantial docs tree are all live on `main`, with a case study from a real self-hosted Qwen run to show the shape of the thing. Looking for a few genuine collaborators — one PR, one design conversation, or "I'll be an early user and file real bug reports" all welcome. Reach out to Brian if you're curious.
 
 **Repo:** [github.com/PurpleBlossomAI/instar](https://github.com/PurpleBlossomAI/instar)
-**Status:** pre-v0.1 (repo scaffolding + governance + CI landed 2026-07-21; v0.1 targeted early August 2026)
+**Status:** pre-v0.1 (harness core + docs landed 2026-07-22; v0.1 tag targeted early August 2026)
 **License:** Apache 2.0
 
 ---
@@ -37,21 +37,22 @@ Instar is built by folks at Atelier, Purple Blossom AI's consulting practice; At
 
 Brian Fromme is day-to-day maintainer through v0.1. Prithvi Devraj continues to run a parallel experimental space at [github.com/PurpleBlossomAI/gateway-lab](https://github.com/PurpleBlossomAI/gateway-lab).
 
-## Current state (2026-07-21)
+## Current state (2026-07-22)
 
-Landed in the first days:
+Landed on `main`, CI-green:
 
-- Apache 2.0 license, README, plan, governance files (`CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, `CHANGELOG.md`).
-- `pyproject.toml` and CI (`ruff`, `mypy --strict`, `pytest` on Python 3.11 / 3.12 / 3.13, SPDX-header check) — all green on `main`.
-- Package skeleton at `Engineering/src/instar/`.
+- Governance and packaging: license, README, plan, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, `CHANGELOG.md`, `pyproject.toml`, CI (`ruff`, `mypy --strict`, `pytest` on Python 3.11 / 3.12 / 3.13, SPDX-header check).
+- The harness itself: `Engineering/src/instar/` with core (traffic, catalog, gateway, route, cost), the `instar` CLI, provider adapters (Anthropic, OpenAI-compatible, mock), routing policies (rules + cost/quality classifier), a rubric framework with spec loader and LLM-judge scaffolding, and a Markdown reporter.
+- Fixtures under `Engineering/fixtures/` — synthetic traffic samples, catalogs, and an illustrative rubric spec.
+- A substantial `Engineering/Docs/` knowledge tree with a stated four-mode structure (Explain / Guide / Do / Judge): a rubric reference, a step-by-step rubric-writing guide, a hands-on ten-minute lesson, a case study from a live self-hosted Qwen run, a runbook, a providers guide, and a code overview.
+- `Planning/Engagement-Methodology.md` — the eleven-phase spine that places every Instar concept inside a full evaluation engagement.
 
-Landing next (Week 2 of the sprint):
+Still ahead:
 
-- First runnable example: `instar run examples/hello.yaml --mock`.
-- One real provider adapter (Anthropic or OpenAI).
-- One illustrative rubric.
-- MkDocs Material scaffold for the docs site.
-- v0.1.0 tag.
+- Formal v0.1.0 tag, gated on off-box verifications in `Planning/Naming.md` (PyPI name, domain reservations, trademark quick-pass).
+- Additional provider adapters (Google, vLLM native, OpenRouter, LiteLLM) as demand pulls them in.
+- MkDocs Material scaffold if we choose to publish the docs tree as a hosted site.
+- Customer-facing `Engineering/docs/How-Instar-Fits-an-Evaluation.md` walking through a canonical engagement using the phase vocabulary.
 
 ## What you'd actually do
 

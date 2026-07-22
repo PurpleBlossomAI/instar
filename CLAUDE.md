@@ -1,8 +1,8 @@
 # Instar — Claude Context Guide
 
-**Last Updated:** 2026-07-21
+**Last Updated:** 2026-07-22
 **Repo:** `~/projects/PurpleBlossomAI/instar` · GitHub: `PurpleBlossomAI/instar`
-**Status:** Freshly created (2026-07-21). Only LICENSE, .gitignore, README, and this Planning/Engineering scaffolding exist. **No code yet.**
+**Status:** Harness core, CLI, provider adapters, routing policies, rubric framework, reporters, tests, and a substantial `Engineering/Docs/` knowledge tree are all landed on `main`. CI (ruff, mypy --strict, pytest matrix, SPDX check) green. Pre-v0.1 tag — off-box verifications in `Planning/Naming.md` (PyPI, domains, trademark) are still owed before public announcement.
 
 ---
 
@@ -32,21 +32,37 @@ The name comes from biology — an *instar* is a stage between molts in an insec
 instar/
 ├── CLAUDE.md              # this file
 ├── LICENSE                # Apache 2.0
-├── README.md              # mission stub — full rewrite is a Week-1 sprint item
+├── README.md              # public front page (v0.1-shaped)
+├── CONTRIBUTING.md        # contribution flow, IP boundary, DCO sign-off
+├── CODE_OF_CONDUCT.md     # Contributor Covenant v2.1
+├── SECURITY.md            # 90-day coordinated disclosure
+├── CHANGELOG.md           # keep-a-changelog format; [Unreleased] tracks pre-v0.1
+├── pyproject.toml         # setuptools; package rooted at Engineering/src/instar/
 ├── .gitignore
-├── Planning/              # by-function: strategy, plan, naming
+├── .github/workflows/ci.yml  # ruff + mypy --strict + pytest matrix + SPDX header check
+├── Planning/              # strategy, plan, naming, methodology
 │   ├── README.md
 │   ├── Project-Plan.md    # THE plan; read this second
-│   └── Naming.md          # why "Instar" + off-box verifications still owed
-├── Engineering/           # by-function: code + engineering notes
+│   ├── Naming.md          # why "Instar" + off-box verifications still owed
+│   └── Engagement-Methodology.md   # 11-phase spine, IP-boundary annotated per phase
+├── Engineering/           # code, tests, fixtures, docs
 │   ├── README.md
-│   └── src/instar/
-│       └── __init__.py    # empty package placeholder
-└── Marketing/             # by-function: positioning, announcements (empty)
-    └── README.md
+│   ├── Introduction.md    # contributor-facing recruiting doc
+│   ├── Docs/              # knowledge tree — four teaching modes (Explain/Guide/Do/Judge)
+│   │   ├── README.md      # start-here index; see for the full doc map
+│   │   ├── RUBRICS.md, GUIDE-Creating-Rubrics.md, GUIDE-Setting-the-Bar.md
+│   │   ├── LESSON-Rubrics-Hands-On.md, CASE-STUDY-Qwen-Triage.md
+│   │   ├── CODE-OVERVIEW.md, PROVIDERS.md, RUNBOOK.md
+│   │   └── 00-README.md   # symlink to README.md so index sorts first
+│   ├── src/instar/        # harness: core/, cli/, policies/, providers/, reporters/, rubrics/
+│   ├── fixtures/          # synthetic traffic, catalogs, illustrative rubric
+│   └── tests/             # pytest; mock-mode default; `live` marker for real providers
+└── Marketing/             # positioning, announcement drafts
+    ├── README.md
+    └── Measuring-Your-AI-Costs.md  # draft; not for publication yet
 ```
 
-Everything else the OSS project needs (CONTRIBUTING.md, CODE_OF_CONDUCT.md, SECURITY.md, CHANGELOG.md, pyproject.toml, .github/workflows/, src code, tests, docs site) is a Week-1 sprint task — see `Planning/Project-Plan.md` §Week-1.
+The Week-1 scaffolding described in `Planning/Project-Plan.md` §10 has completed; Week-2 items are largely done too (harness core is real, a live provider adapter exists, an illustrative rubric ships, a case study on a real self-hosted Qwen run is written up). Remaining before v0.1 tag: off-box verifications in `Planning/Naming.md`.
 
 ---
 
@@ -68,22 +84,27 @@ When something new comes up that doesn't obviously fit, ask: is it *governance/t
 
 ## Where to look first
 
-1. `README.md` — the public face; currently a mission stub.
+1. `README.md` — the public face.
 2. `Planning/Project-Plan.md` — the plan. IP boundary, license, sprint, roadmap, contribution model.
-3. `Planning/Naming.md` — why Instar, what verifications are still owed off-box.
-4. `Engineering/README.md` — what lives in Engineering and the src layout note.
+3. `Planning/Engagement-Methodology.md` — the 11-phase spine for how Instar fits into a full evaluation engagement. Read to understand where each Instar concept sits in the larger consulting arc.
+4. `Engineering/Docs/README.md` — start-here index for the tool docs; a four-mode teaching structure (Explain / Guide / Do / Judge) organizes everything under it.
+5. `Planning/Naming.md` — why Instar, what verifications are still owed off-box.
+6. `Engineering/README.md` — what lives in Engineering and the src layout note.
 
 ---
 
 ## Repo relationship: Instar and gateway-lab
 
-There is a **sibling repo** at `github.com/PurpleBlossomAI/gateway-lab`. That is **Prithvi's** experimental space (testing, paper writing). Instar is Brian's new, curated, packaged, adoptable OSS artifact — created 2026-07-21 as an empty repo rather than renaming gateway-lab, so Prithvi's work isn't disturbed.
+There is a **sibling repo** at `github.com/PurpleBlossomAI/gateway-lab` — **Prithvi's** experimental space (testing, paper writing). Instar was created 2026-07-21 as an empty repo rather than renaming gateway-lab, so Prithvi's work wasn't disturbed.
+
+**Posture (decided 2026-07-22):** Instar is the durable home for the Measurement Harness. The harness core was ported here from the gateway experiment on 2026-07-22 (commit `1b250bf`) as a clean-room implementation. MVP1's harness code is to be archived (preserve provenance, don't delete). Prithvi keeps `gateway-lab` for a few more weeks (paper work, in-flight items); after that the repo winds down. See `Planning/Project-Plan.md` §13 for the fuller framing.
 
 **Rules:**
-- Instar does not fork gateway-lab's git history. Any code lift is clean-room re-implementation (both repos are internal PurpleBlossomAI work, so there's no license contamination question, but keeping histories separate keeps the story simple).
+- New harness work goes to Instar. Not MVP1, not gateway-lab.
+- Instar does not fork gateway-lab's git history. Any further code lift is clean-room re-implementation.
 - Do **not** push commits to gateway-lab from this repo. Prithvi owns it.
-- Do **not** conflate them in issues, PRs, or docs. They serve different audiences.
-- Convergence question (do the repos eventually merge? does one retire?) is deliberately deferred 30–60 days. See `Planning/Project-Plan.md` §Repo relationship.
+- Do **not** conflate them in issues, PRs, or docs. They serve different audiences during the overlap window.
+- If code lands in gateway-lab during the overlap window that belongs in Instar, flag it and port here rather than duplicating.
 
 ---
 

@@ -273,14 +273,21 @@ If we optimize for stars we build for the demo. If we optimize for "one customer
 
 ## 13. Repo relationship — Instar and gateway-lab
 
-Two repos, deliberately parallel:
+Two repos, deliberately parallel — for a bounded window.
 
-- **`github.com/PurpleBlossomAI/gateway-lab`** — Prithvi's continuing experimental space. Testing, paper-writing. Not under Brian's stewardship day-to-day.
-- **`github.com/PurpleBlossomAI/instar`** — Brian's push on the curated, packaged, adoptable OSS artifact. This repo.
+- **`github.com/PurpleBlossomAI/gateway-lab`** — Prithvi's experimental space. Testing, paper-writing. Not under Brian's stewardship day-to-day.
+- **`github.com/PurpleBlossomAI/instar`** — the curated, packaged, adoptable OSS artifact. This repo.
 
-They will inevitably share design DNA — that's fine; both are internal Purple Blossom AI work, so Brian can port concepts/patterns from `gateway-lab` into Instar as clean-room re-implementations. No license issue because we own both.
+They share design DNA — both are internal Purple Blossom AI work, so patterns can be ported from `gateway-lab` into Instar as clean-room re-implementations (no license issue because we own both). The harness core was ported this way at commit `1b250bf` on 2026-07-22.
 
-**Convergence deferred 30–60 days.** Do they eventually merge, or stay parallel (gateway-lab as sandbox, Instar as shipped artifact)? Let both run and see. Force-convergence early is worse than parallel drift for a bit.
+**Convergence decision (2026-07-22): Instar is the durable home for the Measurement Harness.** Under the original plan this call was deferred 30–60 days from repo creation. Brian moved it up because the StBarths session shipped a substantive harness port plus a full docs tree here, and continuing to treat three repos (Instar, gateway-lab, MVP1) as parallel candidates for the same code was creating duplication risk and scope ambiguity.
+
+**What this means concretely:**
+
+- New harness work goes to Instar. Do not port to MVP1 or gateway-lab.
+- MVP1's harness code is to be archived (not deleted — preserve provenance for any later legal or IP questions).
+- Prithvi keeps `gateway-lab` for a few more weeks (paper writing, in-flight items). After that the repo winds down; consider archiving it on GitHub (Settings → Archive) so it's read-only and clearly signals "reference, not active."
+- If code lands in `gateway-lab` during the overlap window that belongs in Instar, flag it and port here rather than letting the duplication persist.
 
 ---
 

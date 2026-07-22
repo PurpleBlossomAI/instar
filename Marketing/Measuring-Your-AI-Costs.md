@@ -2,7 +2,7 @@
 
 > **TL;DR:** If you're deploying LLMs at any scale, the model / router / policy choice is now a material line item — but most organizations still make it on vendor benchmarks and gut feel. Instar is an open-source harness (Apache 2.0) that runs your real traffic through candidate configurations and produces defensible cost / quality / latency reports. This document explains why measurement matters, what a serious evaluation actually looks like, and where Instar fits.
 
-**Draft status:** first pass, 2026-07-21. Not yet public — awaiting v0.1 tag, PyPI availability, domain reservation, and trademark clearance (see `../Planning/Naming.md`).
+**Draft status:** first pass, revised 2026-07-22. Not yet public — awaiting v0.1 tag, PyPI availability, domain reservation, and trademark clearance (see `../Planning/Naming.md`).
 
 ---
 
@@ -108,7 +108,7 @@ The point of measurement is not a one-shot decision. It is a repeatable process.
 
 Two paths, same output:
 
-1. **Run it yourself.** If you have in-house ML platform or engineering capacity, install from source at v0.1 (PyPI at v0.2), follow the docs, and produce your own report. It's Apache 2.0 — no license conversation, no vendor sales cycle.
+1. **Run it yourself.** If you have in-house ML platform or engineering capacity, install from source today (`pip install -e ".[dev]"`; PyPI is deferred until the API stabilizes at v0.2). The `Engineering/Docs/` tree includes a ten-minute hands-on lesson that runs deterministically in mock mode — no API keys, no spend — so your team can validate the tool before running anything live. It's Apache 2.0.
 
 2. **Engage a consulting partner.** If you don't have the in-house capacity, or you'd prefer the process run by people who have done it before, engage a partner. Atelier — Purple Blossom AI's consulting practice, and the team that built Instar — does this work. The tool is open source, so any competent consultancy can also.
 
@@ -120,7 +120,7 @@ Either way, the artifact you get is the same shape: a report you can trust, that
 
 - **Project:** [github.com/PurpleBlossomAI/instar](https://github.com/PurpleBlossomAI/instar)
 - **License:** Apache 2.0
-- **Status:** pre-v0.1 as of 2026-07-21; v0.1 targeted early August 2026
+- **Status:** pre-v0.1 as of 2026-07-22; harness core is live and CI-green on main; v0.1 tag targeted early August 2026
 - **Contact:** brianfromme@gmail.com
 
 *This document is a first-pass draft. It will evolve as v0.1 ships and as real evaluation engagements produce feedback on what leaders actually need to read.*
