@@ -35,6 +35,7 @@ from instar.providers.openai_compat import OpenAICompatBackend
 from instar.reporters import DEFAULT_RUNS_DIR, report_gateway, report_route, report_sweep
 from instar.rubrics.base import Judge
 from instar.rubrics.judges import AutoJudge, LabelMatchJudge, LLMJudge, MockJudge
+from instar.rubrics.spec import FAIL, MARGINAL, Rubric
 
 # Undated model ids on purpose — dated snapshot ids are a recurring 404 source.
 DEFAULT_STRONG = os.getenv("INSTAR_STRONG_MODEL", "claude-sonnet-4-6")
@@ -120,6 +121,10 @@ def _live_backend(name: str, url: str | None, key_env: str | None) -> Backend:
 
 def _cmd_route(args: argparse.Namespace) -> int:
     samples, catalog, pricing = _load_inputs(args.traffic, args.catalog, args.pricing)
+    try:
+        rubric = Rubric.from_json(args.rubric) if args.rubric else None
+    except (OSError, ValueError, KeyError, TypeError) as e:
+        raise SystemExit(f"instar: {e}") from e
     mock = not args.live
 
     strong_model = MOCK_STRONG_MODEL if mock else args.strong_model
@@ -172,6 +177,7 @@ def _cmd_route(args: argparse.Namespace) -> int:
             strong_model=strong_model,
             weak_model=weak_model,
             runs_dir=args.runs_dir,
+            custom_pricing=pricing is not None,
         )
         print(f"sweep -> {d}")
         for p in points:
@@ -199,7 +205,15 @@ def _cmd_route(args: argparse.Namespace) -> int:
         catalog=catalog,
     )
     label = args.label or f"route-{policy.name}-{'mock' if mock else 'live'}"
-    d = report_route(result, label, mock=mock, runs_dir=args.runs_dir)
+    rubric_verdict = rubric.evaluate(result) if rubric else None
+    d = report_route(
+        result,
+        label,
+        mock=mock,
+        runs_dir=args.runs_dir,
+        rubric_verdict=rubric_verdict,
+        custom_pricing=pricing is not None,
+    )
 
     mq_weak = (
         "n/a"
@@ -212,8 +226,20 @@ def _cmd_route(args: argparse.Namespace) -> int:
         f"q_all={result.mean_quality_all:.3f}  q_weak={mq_weak}  "
         f"weak={result.weak_count}/{result.n}"
     )
+    if rubric_verdict is not None:
+        print(f"  rubric={rubric_verdict.rubric}  verdict={rubric_verdict.verdict.upper()}")
+        for dv in rubric_verdict.dimensions:
+            value = "not measured" if dv.value is None else f"{dv.value:,.4g}"
+            print(f"    {dv.verdict.upper():10s} {dv.id:24s} {value}")
     for w in result.warnings:
         print(f"  warning: {w}", file=sys.stderr)
+    if rubric_verdict is not None and rubric_verdict.verdict in (FAIL, MARGINAL):
+        # A rubric exists to gate a decision. If the bar was not met, saying so
+        # in the exit status is the whole point.
+        for dv in rubric_verdict.failed + rubric_verdict.unmeasured:
+            print(f"  rubric {dv.verdict}: {dv.id} ({dv.metric})", file=sys.stderr)
+        if rubric_verdict.verdict == FAIL:
+            return 1
     if result.error_count:
         print(
             f"  {result.error_count}/{result.n} calls FAILED — figures exclude them and "
@@ -294,6 +320,11 @@ def build_parser() -> argparse.ArgumentParser:
         "the classifier policy, ignoring --policy",
     )
     route.add_argument("--catalog", help="feature catalog JSON mapping features to categories")
+    route.add_argument(
+        "--rubric",
+        help="rubric JSON: the dimensions and thresholds this run must meet. "
+        "A failing verdict exits 1.",
+    )
     route.add_argument(
         "--pricing",
         help="pricing table JSON; REPLACES the built-in table rather than merging, so "

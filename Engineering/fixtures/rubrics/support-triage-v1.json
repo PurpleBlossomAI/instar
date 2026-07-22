@@ -1,0 +1,49 @@
+{
+  "name": "support-triage-v1",
+  "description": "Illustrative rubric for a support ticket triage workload. These thresholds are an EXAMPLE of the format, not a recommendation - what 'good enough' means depends on what happens downstream of a misclassified ticket, which only you know. Agree your own numbers with the stakeholder who owns the outcome, and do it before the run.",
+  "dimensions": [
+    {
+      "id": "accuracy",
+      "label": "Label accuracy on tickets moved to the cheap model",
+      "metric": "quality.routed_weak_mean",
+      "direction": "higher_is_better",
+      "pass_at": 0.95,
+      "marginal_at": 0.9,
+      "rationale": "Only the routed-weak calls are at risk; calls kept on the strong model score 1.0 by definition and would dilute this. Below 0.90 a human has to re-check every ticket, which erases the saving."
+    },
+    {
+      "id": "worst_case_accuracy",
+      "label": "No single routed call scored zero",
+      "metric": "quality.routed_weak_min",
+      "direction": "higher_is_better",
+      "pass_at": 1.0,
+      "rationale": "A mean can look healthy while one ticket type fails completely. On a classification workload this catches a category the small model simply cannot recognize."
+    },
+    {
+      "id": "savings",
+      "label": "Share of spend saved vs all-strong baseline",
+      "metric": "cost.saved_pct",
+      "direction": "higher_is_better",
+      "pass_at": 40.0,
+      "marginal_at": 20.0,
+      "rationale": "Below 20% the operational cost of running a second model outweighs the saving."
+    },
+    {
+      "id": "latency",
+      "label": "p95 latency of the call a user waits on",
+      "metric": "latency.p95_ms",
+      "direction": "lower_is_better",
+      "pass_at": 2000.0,
+      "marginal_at": 5000.0,
+      "rationale": "Triage runs on a background sync, so this is generous. Tighten it hard for anything a person watches."
+    },
+    {
+      "id": "run_integrity",
+      "label": "No failed calls",
+      "metric": "run.error_count",
+      "direction": "lower_is_better",
+      "pass_at": 0.0,
+      "rationale": "A run with failed calls has excluded them from every other number here. Fix the run before reading the verdict."
+    }
+  ]
+}

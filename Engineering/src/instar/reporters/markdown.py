@@ -17,6 +17,7 @@ from typing import Any
 
 from instar.core.gateway import GatewayResult
 from instar.core.route import RouteResult, SweepPoint
+from instar.rubrics.spec import RubricVerdict
 
 DEFAULT_RUNS_DIR = "runs"
 
@@ -26,10 +27,20 @@ MOCK_BANNER = (
     "make a decision."
 )
 
-PRICING_CAVEAT = (
-    "_Costs use Instar's placeholder pricing table unless you supplied your own with "
-    "`--pricing`. Verify against current provider pricing before quoting any figure._"
+PLACEHOLDER_PRICING_CAVEAT = (
+    "> **Costs use Instar's built-in placeholder pricing table.** Those rates are "
+    "illustrative and go stale the moment a provider changes a price. Supply your own "
+    "with `--pricing` before quoting any dollar figure."
 )
+
+CUSTOM_PRICING_NOTE = (
+    "_Costs use the pricing table you supplied with `--pricing`. Token counts are in "
+    "the per-call table below, so the arithmetic can be checked._"
+)
+
+
+def _pricing_caveat(custom_pricing: bool) -> str:
+    return CUSTOM_PRICING_NOTE if custom_pricing else PLACEHOLDER_PRICING_CAVEAT
 
 
 def _run_dir(label: str, runs_dir: str | Path = DEFAULT_RUNS_DIR) -> Path:
@@ -66,12 +77,50 @@ def _warning_block(warnings: list[str], error_count: int = 0, n: int = 0) -> lis
     return lines
 
 
+VERDICT_MARK = {"pass": "PASS", "marginal": "MARGINAL", "fail": "FAIL", "unmeasured": "UNMEASURED"}
+
+
+def _rubric_block(verdict: RubricVerdict) -> list[str]:
+    """Render the rubric verdict. It goes at the TOP of the report: the decision
+    is what the reader came for, and burying it under the raw numbers invites
+    them to find their own story in the data instead."""
+    lines = [
+        f"## Verdict: {VERDICT_MARK.get(verdict.verdict, verdict.verdict.upper())}",
+        "",
+        f"Rubric: **{verdict.rubric}**",
+        "",
+        "| dimension | measured | bar | result |",
+        "|---|---|---|---|",
+    ]
+    for d in verdict.dimensions:
+        value = "not measured" if d.value is None else f"{d.value:,.4g}"
+        comparator = ">=" if d.direction == "higher_is_better" else "<="
+        bar = f"{comparator} {d.pass_at:,.4g}"
+        if d.marginal_at is not None:
+            bar += f" (marginal {comparator} {d.marginal_at:,.4g})"
+        lines.append(
+            f"| {d.label} | {value} | {bar} | **{VERDICT_MARK.get(d.verdict, d.verdict)}** |"
+        )
+    lines += [
+        "",
+        "_Overall verdict is the **worst** dimension, never an average — a large saving "
+        "must not be able to hide a failing quality score. A dimension that could not be "
+        "measured is not a pass._",
+        "",
+    ]
+    for note in verdict.notes:
+        lines += [f"> **Note:** {note}", ""]
+    return lines
+
+
 def report_route(
     result: RouteResult,
     label: str,
     *,
     mock: bool,
     runs_dir: str | Path = DEFAULT_RUNS_DIR,
+    rubric_verdict: RubricVerdict | None = None,
+    custom_pricing: bool = False,
 ) -> Path:
     """Write the routing report. Returns the run directory."""
     c = result.cost
@@ -91,6 +140,8 @@ def report_route(
     if mock:
         lines += [MOCK_BANNER, ""]
     lines += _warning_block(result.warnings, result.error_count, result.n)
+    if rubric_verdict is not None:
+        lines += _rubric_block(rubric_verdict)
     lines += [
         "| metric | value |",
         "|---|---|",
@@ -104,22 +155,29 @@ def report_route(
         "scored 1.0 by definition. The routed-weak figure is where quality risk actually "
         "lives — read that one._",
         "",
-        PRICING_CAVEAT,
+        _pricing_caveat(custom_pricing),
         "",
         "## Per-call decisions",
         "",
-        "| id | feature | category | target | cost | quality | why |",
-        "|---|---|---|---|---|---|---|",
+        "| id | feature | category | target | tokens (in/out) | cost | latency | quality | why |",
+        "|---|---|---|---|---|---|---|---|---|",
     ]
     for o in result.outcomes:
         cost = "—" if not o.ok else f"${o.routed_usd:.6f}"
+        latency = "—" if not o.ok else f"{o.routed_latency_s * 1000.0:.0f} ms"
         quality = "—" if not o.ok else f"{o.quality:.2f}"
-        why = o.error if not o.ok else o.reason
+        why = o.error if not o.ok else (o.rationale or o.reason)
+        tokens = "—" if not o.ok else f"{o.routed_input_tokens}/{o.routed_output_tokens}"
         lines.append(
-            f"| `{o.id}` | {o.feature} | {o.category} | {o.target} | {cost} | {quality} | {why} |"
+            f"| `{o.id}` | {o.feature} | {o.category} | {o.target} | {tokens} | {cost} | "
+            f"{latency} | {quality} | {why} |"
         )
     lines.append("")
-    return _write(label, result.to_json(), "\n".join(lines), runs_dir)
+
+    payload = result.to_json()
+    if rubric_verdict is not None:
+        payload["rubric"] = rubric_verdict.to_json()
+    return _write(label, payload, "\n".join(lines), runs_dir)
 
 
 def report_sweep(
@@ -130,6 +188,7 @@ def report_sweep(
     strong_model: str,
     weak_model: str,
     runs_dir: str | Path = DEFAULT_RUNS_DIR,
+    custom_pricing: bool = False,
 ) -> Path:
     """Write the cost/quality sweep, including a CSV for charting."""
     lines = [
@@ -159,7 +218,7 @@ def report_sweep(
         "fall away — that is your workload's actual budget for cheapness, and it is not "
         "transferable to anyone else's workload._",
         "",
-        PRICING_CAVEAT,
+        _pricing_caveat(custom_pricing),
         "",
     ]
 

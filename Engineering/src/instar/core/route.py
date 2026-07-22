@@ -48,6 +48,17 @@ class SampleOutcome:
     baseline_usd: float  # all-strong cost for this call
     routed_usd: float  # cost under the policy
     quality: float  # 1.0 if kept strong; judge score if routed weak
+    # Wall-clock for the call the user would actually have waited on: the weak
+    # call when the policy routed it, the strong call otherwise. Routing to a
+    # cheaper model changes latency as well as cost, usually for the better,
+    # and a cost study that ignores that is telling half the story.
+    baseline_latency_s: float = 0.0
+    routed_latency_s: float = 0.0
+    # Token counts for the routed call, as reported by the provider. Recorded so
+    # a cost figure can be audited: without them a reader has to take the dollar
+    # number on faith, and a wrong pricing row is invisible.
+    routed_input_tokens: int = 0
+    routed_output_tokens: int = 0
     rationale: str = ""
     ok: bool = True  # False if a backend call failed
     error: str | None = None
@@ -158,11 +169,15 @@ def run_route(
             verdict = judge.score(sample, strong, weak)
             quality = verdict.score
             rationale = verdict.rationale
+            routed_latency_s = weak.latency_s
+            routed_call = weak
             weak_qualities.append(quality)
         else:
             routed_usd = baseline_usd
             quality = 1.0
             rationale = "kept on strong model; unchanged by definition"
+            routed_latency_s = strong.latency_s
+            routed_call = strong
 
         outcomes.append(
             SampleOutcome(
@@ -174,6 +189,10 @@ def run_route(
                 baseline_usd=baseline_usd,
                 routed_usd=routed_usd,
                 quality=quality,
+                baseline_latency_s=strong.latency_s,
+                routed_latency_s=routed_latency_s,
+                routed_input_tokens=routed_call.input_tokens,
+                routed_output_tokens=routed_call.output_tokens,
                 rationale=rationale,
             )
         )

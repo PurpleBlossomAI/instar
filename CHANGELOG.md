@@ -21,6 +21,10 @@ Instar is in **v0.x** — the API surface is unstable until v1.0.0. Breaking cha
 - `instar` console-script entry point and an `anthropic` optional-dependency extra.
 - `Engineering/Docs/CODE-OVERVIEW.md` (architecture and extension points) and `Engineering/Docs/RUNBOOK.md` (task-oriented, including a walkthrough for measuring your own workload).
 - `--strong-url` / `--weak-url` (with matching `--*-key-env`) on `instar route`, so either arm can be any OpenAI-compatible endpoint rather than Anthropic. This is what makes the CLI able to evaluate a self-hosted small model against a frontier baseline. The LLM judge runs on the strong arm.
+- **Rubrics** (`instar.rubrics.spec`) — the framework for turning a measurement into a decision. A rubric is JSON: named dimensions, each binding a measured metric to a `pass_at` threshold and optional `marginal_at` band, agreed before the run and executed with `--rubric`. Two deliberate refusals: the overall verdict is the **worst** dimension rather than an average, so a large cost saving cannot cancel out a failing quality score; and a dimension the run could not measure returns `unmeasured`, which is never a pass. A failing verdict exits 1 so CI can refuse to publish a report its own rubric rejected. Closes the gap where `Planning/Engagement-Methodology.md` §B and `Marketing/Measuring-Your-AI-Costs.md` both promised per-dimension rubric scoring that the code did not implement.
+- `Engineering/Docs/RUBRICS.md` and an example rubric under `Engineering/fixtures/rubrics/`. The framework ships; the rubrics do not — per-department thresholds stay with whoever owns the outcome.
+- `Engineering/Docs/PROVIDERS.md` — how to connect Instar to a hosted LLM (account, payment, key, base URL) and to a self-hosted SLM (Ollama/vLLM/llama.cpp, sizing, licensing posture), plus the small-model failure modes that look like poor quality but are really prompt or plumbing bugs.
+- The route runner now records per-call latency and token counts, so cost arithmetic in a report can be audited rather than taken on faith, and rubrics can bind latency dimensions.
 - Repository scaffolding: `Planning/`, `Engineering/`, `Marketing/`, `CLAUDE.md`, initial README stub.
 - Governance files: `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md` (Contributor Covenant v2.1), `SECURITY.md`, `CHANGELOG.md`.
 - `pyproject.toml` with setuptools build backend, PEP 639 SPDX license fields, and configuration for `ruff` (lint + format), `mypy --strict`, and `pytest`. Package located at `Engineering/src/instar/` per `CLAUDE.md` §Organization principle.
@@ -49,6 +53,8 @@ Instar is in **v0.x** — the API surface is unstable until v1.0.0. Breaking cha
 ### Fixed
 
 - Bad input now exits with a message rather than a traceback: a malformed fixture line, an invalid catalog, a missing file, and an uninstalled provider SDK all report cleanly and exit 1.
+- Reports stated that costs came from the placeholder pricing table "unless you supplied your own", which was misleading in both directions. A report now says which table it actually used, and the placeholder case is a prominent warning rather than a hedge in a footnote.
+- The shipped support-triage fixture did not pin its output language. Against an exact-match scorer a multilingual model answering in another language scores 0%, which reads as a model-quality failure rather than the prompt bug it is.
 
 ### Security
 
