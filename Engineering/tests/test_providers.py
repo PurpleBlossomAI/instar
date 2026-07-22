@@ -145,6 +145,22 @@ def test_anthropic_turns_an_exception_into_a_failed_result() -> None:
     assert "rate limited" in (r.error or "")
 
 
+def test_a_missing_sdk_explains_how_to_install_it(monkeypatch: pytest.MonkeyPatch) -> None:
+    """A raw ModuleNotFoundError traceback helps nobody."""
+    import builtins
+
+    real_import = builtins.__import__
+
+    def no_anthropic(name: str, *a: object, **kw: object) -> Any:
+        if name == "anthropic":
+            raise ModuleNotFoundError("No module named 'anthropic'")
+        return real_import(name, *a, **kw)  # type: ignore[arg-type]
+
+    monkeypatch.setattr(builtins, "__import__", no_anthropic)
+    with pytest.raises(ModuleNotFoundError, match=r"instar\[anthropic\]"):
+        AnthropicBackend().complete(SAMPLE, "m")
+
+
 def test_anthropic_ignores_non_text_blocks() -> None:
     response = SimpleNamespace(
         content=[

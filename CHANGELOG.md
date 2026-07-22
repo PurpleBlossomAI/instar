@@ -17,8 +17,10 @@ Instar is in **v0.x** — the API surface is unstable until v1.0.0. Breaking cha
   - `cli/` — `instar route` and `instar gateway`, both defaulting to hermetic mock mode.
 - `OpenAICompatBackend` is implemented over `urllib` rather than an SDK, so vLLM, Ollama, LiteLLM, OpenRouter, and OpenAI are all reachable from a stdlib-only install.
 - Synthetic, PII-free workload fixtures under `Engineering/fixtures/`: support triage (24 calls, gold labels, objectively scorable), marketing content ops (12, mixed), sales pipeline (10, including a prompt-caching refinement series), and a small mixed smoke sample. Example feature catalogs under `Engineering/fixtures/catalogs/`.
-- 198 tests across 10 files, all hermetic. Includes a check that no private product terms leak into the shipped fixtures, enforcing the IP boundary in CI rather than in a reviewer's memory.
+- 203 tests across 10 files, all hermetic. Includes a check that no private product terms leak into the shipped fixtures, enforcing the IP boundary in CI rather than in a reviewer's memory.
 - `instar` console-script entry point and an `anthropic` optional-dependency extra.
+- `Engineering/Docs/CODE-OVERVIEW.md` (architecture and extension points) and `Engineering/Docs/RUNBOOK.md` (task-oriented, including a walkthrough for measuring your own workload).
+- `--strong-url` / `--weak-url` (with matching `--*-key-env`) on `instar route`, so either arm can be any OpenAI-compatible endpoint rather than Anthropic. This is what makes the CLI able to evaluate a self-hosted small model against a frontier baseline. The LLM judge runs on the strong arm.
 - Repository scaffolding: `Planning/`, `Engineering/`, `Marketing/`, `CLAUDE.md`, initial README stub.
 - Governance files: `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md` (Contributor Covenant v2.1), `SECURITY.md`, `CHANGELOG.md`.
 - `pyproject.toml` with setuptools build backend, PEP 639 SPDX license fields, and configuration for `ruff` (lint + format), `mypy --strict`, and `pytest`. Package located at `Engineering/src/instar/` per `CLAUDE.md` §Organization principle.
@@ -46,7 +48,7 @@ Instar is in **v0.x** — the API surface is unstable until v1.0.0. Breaking cha
 
 ### Fixed
 
-- *nothing yet*
+- Bad input now exits with a message rather than a traceback: a malformed fixture line, an invalid catalog, a missing file, and an uninstalled provider SDK all report cleanly and exit 1.
 
 ### Security
 

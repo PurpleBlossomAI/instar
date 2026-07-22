@@ -105,8 +105,43 @@ def test_a_custom_label_names_the_run_directory(tmp_path: Path) -> None:
 
 
 def test_a_missing_fixture_fails_loudly(tmp_path: Path) -> None:
-    with pytest.raises((SystemExit, FileNotFoundError)):
+    with pytest.raises(SystemExit, match="not found"):
         _run(["route", "--traffic", str(tmp_path / "nope.jsonl")], tmp_path)
+
+
+def test_a_malformed_fixture_reports_a_message_not_a_traceback(tmp_path: Path) -> None:
+    """A typo on line 3 of a fixture is user error; it should read like one."""
+    bad = tmp_path / "bad.jsonl"
+    bad.write_text('{"id":"a","feature":"f","messages":[]}\nnot json\n', encoding="utf-8")
+    with pytest.raises(SystemExit, match=":2:"):
+        _run(["route", "--traffic", str(bad)], tmp_path)
+
+
+def test_a_malformed_catalog_reports_a_message(tmp_path: Path) -> None:
+    bad = tmp_path / "bad.json"
+    bad.write_text('{"categories": {"a.b": "sideways"}}', encoding="utf-8")
+    with pytest.raises(SystemExit, match="sideways"):
+        _run(["route", "--traffic", str(SAMPLE), "--catalog", str(bad)], tmp_path)
+
+
+def test_route_can_point_an_arm_at_an_openai_compatible_endpoint() -> None:
+    """The self-hosted-small-model case: the weak arm must be reachable by URL."""
+    from instar.cli.main import _live_backend
+    from instar.providers.anthropic import AnthropicBackend
+    from instar.providers.openai_compat import OpenAICompatBackend
+
+    weak = _live_backend("weak", "http://localhost:8000", "MY_KEY")
+    assert isinstance(weak, OpenAICompatBackend)
+    assert weak.endpoint == "http://localhost:8000/v1/chat/completions"
+    assert isinstance(_live_backend("strong", None, None), AnthropicBackend)
+
+
+def test_route_accepts_the_provider_url_flags() -> None:
+    args = build_parser().parse_args(
+        ["route", "--weak-url", "http://localhost:8000", "--weak-key-env", "K"]
+    )
+    assert args.weak_url == "http://localhost:8000"
+    assert args.weak_key_env == "K"
 
 
 def test_gateway_runs_and_writes_a_report(tmp_path: Path) -> None:

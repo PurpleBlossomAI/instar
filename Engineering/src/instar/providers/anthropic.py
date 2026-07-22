@@ -35,8 +35,13 @@ class AnthropicBackend(Backend):
 
     def _get_client(self) -> Any:
         if self._client is None:
-            import anthropic  # optional dependency, imported only on a live run
-
+            try:
+                import anthropic  # optional dependency, imported only on a live run
+            except ModuleNotFoundError as e:  # a traceback here helps nobody
+                raise ModuleNotFoundError(
+                    "the Anthropic backend needs the 'anthropic' SDK, which is an "
+                    "optional extra. Install it with:  pip install 'instar[anthropic]'"
+                ) from e
             self._client = anthropic.Anthropic()
         return self._client
 

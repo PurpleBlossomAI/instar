@@ -71,6 +71,23 @@ def _load_catalog(path: str | None) -> FeatureCatalog:
     return FeatureCatalog.from_json(path)
 
 
+def _load_inputs(
+    traffic: str | None, catalog_path: str | None, pricing_path: str | None
+) -> tuple[list[TrafficSample], FeatureCatalog, dict[str, tuple[float, float]] | None]:
+    """Load everything the run needs, reporting bad input as a message rather
+    than a traceback. A malformed fixture is a typo, not a crash."""
+    path = _resolve_traffic(traffic)
+    try:
+        samples = load_traffic(path)
+        catalog = _load_catalog(catalog_path)
+        pricing = load_pricing(pricing_path) if pricing_path else None
+    except FileNotFoundError as e:
+        raise SystemExit(f"instar: file not found: {e.filename}") from e
+    except (ValueError, KeyError, TypeError) as e:
+        raise SystemExit(f"instar: {e}") from e
+    return samples, catalog, pricing
+
+
 def _warn_uncatalogued(catalog: FeatureCatalog, samples: list[TrafficSample]) -> None:
     """Tell the user which features fell through to the default category.
 
@@ -88,11 +105,21 @@ def _warn_uncatalogued(catalog: FeatureCatalog, samples: list[TrafficSample]) ->
         )
 
 
+def _live_backend(name: str, url: str | None, key_env: str | None) -> Backend:
+    """An arm of a live run: an OpenAI-compatible endpoint if a URL was given,
+    otherwise Anthropic.
+
+    The URL form is what lets an arm be a self-hosted small model, a proxy, or
+    any third-party provider — which is the comparison most cost questions
+    actually turn on.
+    """
+    if url:
+        return OpenAICompatBackend(url, name=name, api_key_env=key_env)
+    return AnthropicBackend(name)
+
+
 def _cmd_route(args: argparse.Namespace) -> int:
-    traffic_path = _resolve_traffic(args.traffic)
-    samples = load_traffic(traffic_path)
-    catalog = _load_catalog(args.catalog)
-    pricing = load_pricing(args.pricing) if args.pricing else None
+    samples, catalog, pricing = _load_inputs(args.traffic, args.catalog, args.pricing)
     mock = not args.live
 
     strong_model = MOCK_STRONG_MODEL if mock else args.strong_model
@@ -106,15 +133,15 @@ def _cmd_route(args: argparse.Namespace) -> int:
         weak_backend = MockBackend("weak", latency_s=0.008)
         judge = MockJudge(catalog)
     else:
-        strong_backend = AnthropicBackend("strong")
-        weak_backend = AnthropicBackend("weak")
+        strong_backend = _live_backend("strong", args.strong_url, args.strong_key_env)
+        weak_backend = _live_backend("weak", args.weak_url, args.weak_key_env)
         # Objective label-match wherever a gold label exists; LLM-as-judge for
         # everything else. One judge therefore handles a mixed workload.
         labels = sorted({str(s.meta["gold"]) for s in samples if s.meta.get("gold")})
         label_judge = LabelMatchJudge(labels) if labels else None
-        judge = AutoJudge(
-            label_judge, LLMJudge(AnthropicBackend("judge"), judge_model=strong_model)
-        )
+        # The judge runs on the strong arm: whatever you trust as the quality
+        # baseline is what should be grading the cheaper model's work.
+        judge = AutoJudge(label_judge, LLMJudge(strong_backend, judge_model=strong_model))
 
     _warn_uncatalogued(catalog, samples)
 
@@ -198,8 +225,7 @@ def _cmd_route(args: argparse.Namespace) -> int:
 
 
 def _cmd_gateway(args: argparse.Namespace) -> int:
-    traffic_path = _resolve_traffic(args.traffic)
-    samples = load_traffic(traffic_path)
+    samples, _, _ = _load_inputs(args.traffic, None, None)
     mock = not args.live
     model = MOCK_WEAK_MODEL if mock else args.model
 
@@ -262,11 +288,29 @@ def build_parser() -> argparse.ArgumentParser:
         help="routing policy to test (default: feature_category)",
     )
     route.add_argument("--threshold", type=float, default=0.5, help="classifier policy threshold")
-    route.add_argument("--sweep", help="comma-separated thresholds to sweep, e.g. 0.2,0.4,0.6,0.8")
+    route.add_argument(
+        "--sweep",
+        help="comma-separated thresholds to sweep, e.g. 0.2,0.4,0.6,0.8; always sweeps "
+        "the classifier policy, ignoring --policy",
+    )
     route.add_argument("--catalog", help="feature catalog JSON mapping features to categories")
-    route.add_argument("--pricing", help="pricing table JSON; overrides the placeholder table")
+    route.add_argument(
+        "--pricing",
+        help="pricing table JSON; REPLACES the built-in table rather than merging, so "
+        "include every model your run uses",
+    )
     route.add_argument("--strong-model", default=DEFAULT_STRONG)
     route.add_argument("--weak-model", default=DEFAULT_WEAK)
+    route.add_argument(
+        "--strong-url", help="OpenAI-compatible base url for the strong arm (default: Anthropic)"
+    )
+    route.add_argument("--strong-key-env", help="env var holding the strong arm's API key")
+    route.add_argument(
+        "--weak-url",
+        help="OpenAI-compatible base url for the weak arm, e.g. a self-hosted small model "
+        "(default: Anthropic)",
+    )
+    route.add_argument("--weak-key-env", help="env var holding the weak arm's API key")
     route.set_defaults(func=_cmd_route)
 
     gateway = sub.add_parser(
@@ -290,7 +334,13 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
-    exit_code: int = args.func(args)
+    try:
+        exit_code: int = args.func(args)
+    except ModuleNotFoundError as e:
+        # An uninstalled optional provider SDK is a setup problem, not a crash.
+        raise SystemExit(f"instar: {e}") from e
+    except KeyboardInterrupt:
+        raise SystemExit("instar: interrupted") from None
     return exit_code
 
 

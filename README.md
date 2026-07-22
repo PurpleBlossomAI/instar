@@ -60,6 +60,8 @@ Python 3.11+.
 
 ## Where to go next
 
+- [`Engineering/Docs/RUNBOOK.md`](./Engineering/Docs/RUNBOOK.md) — how to actually run it, including a walkthrough for measuring **your own** workload.
+- [`Engineering/Docs/CODE-OVERVIEW.md`](./Engineering/Docs/CODE-OVERVIEW.md) — orientation for contributors: architecture, the four core abstractions, and how to extend each.
 - [`Planning/Project-Plan.md`](./Planning/Project-Plan.md) — the plan: IP boundary, roadmap, sprint, open questions.
 - [`Planning/Naming.md`](./Planning/Naming.md) — why "Instar," what off-box verifications are still owed before public announcement.
 - Docs site — MkDocs Material scaffold arrives in Week 2; will publish to GitHub Pages under `purpleblossomai.github.io/instar/`.
