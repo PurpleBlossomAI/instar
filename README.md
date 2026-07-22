@@ -62,7 +62,8 @@ Python 3.11+.
 
 - [`Engineering/Docs/RUNBOOK.md`](./Engineering/Docs/RUNBOOK.md) — how to actually run it, including a walkthrough for measuring **your own** workload.
 - [`Engineering/Docs/PROVIDERS.md`](./Engineering/Docs/PROVIDERS.md) — connecting Instar to a hosted LLM or a self-hosted small model.
-- [`Engineering/Docs/RUBRICS.md`](./Engineering/Docs/RUBRICS.md) — defining what "good enough" means, before the run, so a measurement becomes a decision.
+- [`Engineering/Docs/GUIDE-Creating-Rubrics.md`](./Engineering/Docs/GUIDE-Creating-Rubrics.md) — a step-by-step guide to writing a rubric that decides your AI-spend question.
+- [`Engineering/Docs/RUBRICS.md`](./Engineering/Docs/RUBRICS.md) — the rubric reference: every field, metric, and verdict rule.
 - [`Engineering/Docs/CODE-OVERVIEW.md`](./Engineering/Docs/CODE-OVERVIEW.md) — orientation for contributors: architecture, the four core abstractions, and how to extend each.
 - [`Planning/Project-Plan.md`](./Planning/Project-Plan.md) — the plan: IP boundary, roadmap, sprint, open questions.
 - [`Planning/Naming.md`](./Planning/Naming.md) — why "Instar," what off-box verifications are still owed before public announcement.

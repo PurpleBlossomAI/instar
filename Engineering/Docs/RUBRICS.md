@@ -7,6 +7,11 @@
 > overall verdict is the **worst** dimension, never an average, so a large cost
 > saving cannot hide a failing quality score. A dimension with nothing to measure
 > returns `unmeasured`, which is never a pass. A failing verdict exits `1`.
+>
+> **New to rubrics? Start with the tutorial:**
+> [`GUIDE-Creating-Rubrics.md`](GUIDE-Creating-Rubrics.md) teaches the method —
+> how to derive dimensions and thresholds from your decision. This page is the
+> reference you keep open while you write one.
 
 ---
 
