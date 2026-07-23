@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-07-22
 **Repo:** `~/projects/PurpleBlossomAI/instar` · GitHub: `PurpleBlossomAI/instar`
-**Status:** Harness core, CLI, provider adapters, routing policies, rubric framework, reporters, tests, and a substantial `Engineering/Docs/` knowledge tree are all landed on `main`. CI (ruff, mypy --strict, pytest matrix, SPDX check) green. Pre-v0.1 tag — off-box verifications in `Planning/Naming.md` (PyPI, domains, trademark) are still owed before public announcement.
+**Status:** Harness core, CLI, provider adapters, routing policies, rubric framework, reporters, tests, and a substantial `Engineering/Docs/` knowledge tree are all landed on `main`. CI (ruff, mypy --strict, pytest matrix, SPDX check) green. Pre-v0.1 tag. Off-box verifications in `Planning/Naming.md`: PyPI ✓ (`instar` available), docs domain ✓ (`instar-dev.org`), trademark knockout ✓ (Class-9 crowded — full clearance owed before any federal filing). Still owed before public announcement: full Class-9 trademark clearance + a courtesy note to Prithvi. Repo being public is not an announcement.
 
 ---
 
@@ -62,7 +62,7 @@ instar/
     └── Measuring-Your-AI-Costs.md  # draft; not for publication yet
 ```
 
-The Week-1 scaffolding described in `Planning/Project-Plan.md` §10 has completed; Week-2 items are largely done too (harness core is real, a live provider adapter exists, an illustrative rubric ships, a case study on a real self-hosted Qwen run is written up). Remaining before v0.1 tag: off-box verifications in `Planning/Naming.md`.
+The Week-1 scaffolding described in `Planning/Project-Plan.md` §10 has completed; Week-2 items are largely done too (harness core is real, a live provider adapter exists, an illustrative rubric ships, a case study on a real self-hosted Qwen run is written up). Remaining before v0.1 tag: full Class-9 trademark clearance and a courtesy note to Prithvi (PyPI name, docs domain, and trademark knockout are all cleared — see `Planning/Naming.md` §Verification status).
 
 ---
 
@@ -158,7 +158,7 @@ Compact context so you don't relearn it. Detail lives in MVP1's memory system (`
 
 - Do not push to `PurpleBlossomAI/gateway-lab` (Prithvi's repo).
 - Do not create files in this repo that belong in MVP1 (customer engagements, private rubrics, MVP1 backlog tickets, etc.).
-- Do not publish to PyPI, tag a release, or make public announcements until the off-box verifications in `Planning/Naming.md` §Still-to-verify are complete.
+- Do not publish to PyPI, tag a release, or make public announcements until the remaining items in `Planning/Naming.md` §Verification status are complete (full Class-9 trademark clearance + Prithvi notified). The repo being public does not lift this hold.
 - Do not delete or restructure `Engineering/src/instar/` without checking `Planning/Project-Plan.md` first — the layout is deliberate.
 - Do not add a docs domain, blog, Discord, or telemetry before v0.2. Explicitly deferred (see Project-Plan §Documentation surface).
 - Do not add trailing summaries to end-of-turn responses. State what changed and what's next, briefly.
