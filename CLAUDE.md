@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-07-22
 **Repo:** `~/projects/PurpleBlossomAI/instar` · GitHub: `PurpleBlossomAI/instar`
-**Status:** Harness core, CLI, provider adapters, routing policies, rubric framework, reporters, tests, and a substantial `Engineering/Docs/` knowledge tree are all landed on `main`. CI (ruff, mypy --strict, pytest matrix, SPDX check) green. Pre-v0.1 tag. Off-box verifications in `Planning/Naming.md`: PyPI ✓ (`instar` available), docs domain ✓ (`instar-dev.org`), trademark knockout ✓ (Class-9 crowded — full clearance owed before any federal filing). Still owed before public announcement: full Class-9 trademark clearance + a courtesy note to Prithvi. Repo being public is not an announcement.
+**Status:** Harness core, CLI, provider adapters, routing policies, rubric framework, reporters, tests, and a substantial `Engineering/Docs/` knowledge tree are all landed on `main`. CI (ruff, mypy --strict, pytest matrix, SPDX check) green. Pre-v0.1 tag. Off-box verifications in `Planning/Naming.md`: PyPI ✓ (reserved as `instar-harness` — bare `instar` disallowed by PyPI policy; import + CLI stay `instar`), docs domain ✓ (`instar-dev.org`), trademark knockout ✓ (Class-9 crowded — full clearance owed before any federal filing). Still owed before public announcement: full Class-9 trademark clearance + a courtesy note to Prithvi. Repo being public is not an announcement.
 
 ---
 
