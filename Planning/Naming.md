@@ -33,9 +33,9 @@ Done 2026-07-23:
 
 ## Verification status (Brian, off-box)
 
-**Not blocking commits to this repo. Blocking public announcement / PyPI push / tagged release.**
+**Not blocking commits to this repo. Blocking public announcement / PyPI *release* (`0.1.0`+) / tagged release.** A `0.0.0` name-holding placeholder is explicitly permitted (see #1).
 
-1. **PyPI availability — ✓ DONE (2026-07-23).** `instar` is unclaimed and reserved for us. No `instar-harness` fallback needed. Actual *publish* is still gated by the announcement hold below.
+1. **PyPI name — ✓ available; reserving via `0.0.0` placeholder (2026-07-23).** `instar` is unclaimed (JSON API `pypi.org/pypi/instar/json` → 404). No `instar-harness` fallback needed. PyPI has no reserve-without-publish, so we claim the name with a metadata-only `0.0.0` placeholder (throwaway scaffold lives outside the repo, not in the harness packaging). The placeholder is **not** a release and **not** an announcement — the hold on published releases (`0.1.0`+), tags, and announcements stands until trademark clearance + the Prithvi note are done. Reversible: the project/release can be deleted from PyPI to free the name (but the `0.0.0` version slot is then burned).
 2. **Domain reservation — ✓ DONE (2026-07-23).** `instar-dev.org` ordered on Namecheap. (Chose `-dev.org` over the earlier `instar.io`/`instar.dev` idea; `instar.com` is the German camera company.) Optional follow-on: defensively grab `instar-dev.com` / matching handles if desired — not a blocker.
 3. **Trademark — knockout DONE (2026-07-23); full clearance still owed.** Preliminary knockout run (see §Trademark knockout below). "Instar" is crowded but almost all uses are unrelated fields (pharma cl.5, rail cl.39, finance cl.36, coaching cl.35/41). **Caution:** Class 9 (software) has a pending bare-word INSTAR application (Qingdao Chang Ning, appl. 79405838, filed Jul 2024) and an active class-9 user (INSTAR Deutschland / cameras). Verdict: fine to **use** as an OSS project/package/CLI name; a full clearance focused on Class 9 is owed **before any federal trademark filing or heavy brand spend**, and a composite/narrow-goods mark would clear more easily than bare "INSTAR."
 4. **Notify Prithvi — ⬜ STILL OWED.** Courtesy heads-up on the name and the fork approach (which is *for* his benefit — protects his continuing `gateway-lab` work).

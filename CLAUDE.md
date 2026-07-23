@@ -158,7 +158,7 @@ Compact context so you don't relearn it. Detail lives in MVP1's memory system (`
 
 - Do not push to `PurpleBlossomAI/gateway-lab` (Prithvi's repo).
 - Do not create files in this repo that belong in MVP1 (customer engagements, private rubrics, MVP1 backlog tickets, etc.).
-- Do not publish to PyPI, tag a release, or make public announcements until the remaining items in `Planning/Naming.md` §Verification status are complete (full Class-9 trademark clearance + Prithvi notified). The repo being public does not lift this hold.
+- Do not publish a *released* version to PyPI (`0.1.0`+), tag a release, or make public announcements until the remaining items in `Planning/Naming.md` §Verification status are complete (full Class-9 trademark clearance + Prithvi notified). A `0.0.0` name-holding placeholder is explicitly allowed and expected (see `Planning/Naming.md` §Verification status #1). The repo being public does not lift this hold.
 - Do not delete or restructure `Engineering/src/instar/` without checking `Planning/Project-Plan.md` first — the layout is deliberate.
 - Do not add a docs domain, blog, Discord, or telemetry before v0.2. Explicitly deferred (see Project-Plan §Documentation surface).
 - Do not add trailing summaries to end-of-turn responses. State what changed and what's next, briefly.
